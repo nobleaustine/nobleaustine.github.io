@@ -1,1 +1,61 @@
-"Hello World" 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Google Sheet Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+    <script>
+        async function fetchData() {
+            const url = "https://script.google.com/macros/s/AKfycbzguPzoYO1hboj3C7i8zZX4B3bOVqI1prAX0G0bNl-5f9R1KkyhOwFCvFTqS7xSjX8Z/exec"; // Replace this with your Google Sheets JSON URL
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                let table = "<table><tr>";
+                Object.keys(data[0]).forEach(key => table += `<th>${key}</th>`);
+                table += "</tr>";
+
+                data.forEach(row => {
+                    table += "<tr>";
+                    Object.values(row).forEach(value => table += `<td>${value}</td>`);
+                    table += "</tr>";
+                });
+
+                table += "</table>";
+                document.getElementById("data").innerHTML = table;
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                document.getElementById("data").innerHTML = "Failed to load data.";
+            }
+        }
+
+        // Fetch data on page load and refresh every 60 seconds
+        window.onload = fetchData;
+        setInterval(fetchData, 60000); // Refresh data every 60 seconds
+    </script>
+</head>
+<body>
+    <h1>Live Google Sheets Data</h1>
+    <div id="data">Loading data...</div>
+</body>
+</html>
